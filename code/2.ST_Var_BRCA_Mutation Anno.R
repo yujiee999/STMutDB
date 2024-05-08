@@ -138,7 +138,7 @@ p3 <- ggplot(spot_cluster_mut, aes(x = cluster, y = MutPerSpot))+
   labs(title = "Plot of Mut by Cluster special", x = "Cluster", y = "Muts. perSpot")+
   theme_classic()
 
-png("E:/数据库/STMut/数据处理/结果/BRCA/GSE203612/GSM6177599/mutation_load.png", width = 670, height = 360)
+png("E:/数据库/STMut/数据处理/结果/BRCA/GSE203612/GSM6177599/mutation_load.png", width = 674, height = 674)
 print(p3)
 dev.off()
 
@@ -160,10 +160,10 @@ get_color <- function(value) {
 # 获取向量中每个值对应的颜色
 my_colors <- sapply(my_values, get_color)
 ##3.并画出突变负荷决定spot簇的核心区域可能性图
-p4 <- SpatialDimPlot(brain,group.by="mut_cluster",label = TRUE, pt.size.factor = 3,label.size = 12,alpha = c(0.8, 1),image.alpha = 0)+scale_fill_manual(values=my_colors)+
+p4 <- SpatialDimPlot(brain,group.by="mut_cluster",label = TRUE, pt.size.factor = 3,label.size = 12,alpha = c(0.8, 1),image.alpha = 1)+scale_fill_manual(values=my_colors)+
   theme(text = element_text(size=24))
 
-png("E:/数据库/STMut/数据处理/结果/BRCA/GSE203612/GSM6177599/mutation_load_slice.png", width = 670, height = 360)
+png("E:/数据库/STMut/数据处理/结果/BRCA/GSE203612/GSM6177599/mutation_load_slice.png", width = 674, height = 674)
 print(p4)
 dev.off()
 
