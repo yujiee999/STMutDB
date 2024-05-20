@@ -58,6 +58,7 @@ spot_gene_mutcount<-data.frame()
 for (file in file_list) {
   df2<- read.table(file, header=T,sep="\t",as.is=T,comment.char = "")
   df2 <- df2[which(df2$ALT_expected!="."),]
+  df2 <- df2[which(df2$Base_observed!=df2$REF),]
   colnames(df2)[1]<-"Chr"
   df2<-merge(df2,anno2)
   ##spot的基因突变次数
