@@ -4,7 +4,7 @@ library(ggplot2)
 library(patchwork)#
 library(dplyr)
 library(hdf5r) #
-###############################读取空转数据################################
+###############################读取空转数据################################filtered_feature_bc_matrix.h5文件和spatial文件夹
 data_dir<- "E:/数据库/STMut/数据处理/BRCA/GSE203612/GSM6177599"
 list.files(data_dir) #查看目录中的文件；
 file_name<- "filtered_feature_bc_matrix.h5"
@@ -43,7 +43,7 @@ saveRDS(brain, "E:/数据库/STMut/数据处理/中间文件/ST_seuratObject.rds
 ############################################################################
 #参考 GSE167036_Cell_subsets_definedby_mutGenes.R
 file_path <- "E:/数据库/STMut/数据处理/BRCA/GSE203612/GSM6177599/Step4_VariantCalling"
-##########################0-读取scsnv注释矩阵###############################
+##########################0-读取scsnv注释矩阵###############################后缀hg38_multianno.csv的文件
 anno<- read.table(paste0(file_path,"/GSM6177599.variants.annovar.Step4.3.1.hg38_multianno.csv"), header=T,sep=",",as.is=T,fill=T)
 anno<-anno[,c(1,2,7)]
 anno<- anno[nchar(anno[,3]) > 1,]# 保留第三列字符长度大于1的行
@@ -54,7 +54,7 @@ anno2 <- anno %>% as_tibble() %>%
 
 file_list <- list.files(path = file_path, pattern = "genotype.tsv$", full.names = TRUE)
 spot_gene_mutcount<-data.frame()
-##########################1-读取scsnv突变矩阵###############################
+##########################1-读取scsnv突变矩阵###############################后缀genotype.tsv的文件
 for (file in file_list) {
   df2<- read.table(file, header=T,sep="\t",as.is=T,comment.char = "")
   df2 <- df2[which(df2$ALT_expected!="."),]
