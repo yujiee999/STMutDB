@@ -1,11 +1,14 @@
 #更改输入输出文件夹名
 disease <- "BRCA"
 input <- paste0("J:/database/STMut/data_process/",disease)
-output_inter <- paste0(""J:/database/STMut/data_process/inter/",disease)
-output <- paste0(""J:/database/STMut/data_process/result/",disease)
-output_table <- paste0(""J:/database/STMut/data_process/result_table/",disease)
+output_inter <- paste0("J:/database/STMut/data_process/inter/",disease)
+output <- paste0("J:/database/STMut/data_process/result/",disease)
+output_table <- paste0("J:/database/STMut/data_process/result_table/",disease)
 GSE_id <- "GSE203612"
 SAM_id <- "GSM6177599"
+dir.create(paste(output_inter,GSE_id,SAM_id,sep="/"), recursive = TRUE)
+dir.create(paste(output,GSE_id,SAM_id,sep="/"), recursive = TRUE)
+dir.create(paste(output_table,GSE_id,SAM_id,sep="/"), recursive = TRUE)
 #载入所需的R包；
 library(Seurat)#
 library(ggplot2)
@@ -52,7 +55,7 @@ saveRDS(brain, paste(output_inter,GSE_id,SAM_id,"ST_seuratObject.rds",sep="/"))
 #参考 GSE167036_Cell_subsets_definedby_mutGenes.R
 file_path <- paste(input,GSE_id,SAM_id,"Step4_VariantCalling",sep="/")
 ##########################0-读取scsnv注释矩阵###############################后缀hg38_multianno.csv的文件
-anno<- read.table(paste0(file_path,"/",SAM_id,"variants.annovar_all.hg38_multianno.csv"), header=T,sep=",",as.is=T,fill=T)
+anno<- read.table(paste0(file_path,"/",SAM_id,".variants.annovar_all.hg38_multianno.csv"), header=T,sep=",",as.is=T,fill=T)
 anno<-anno[,c(1,2,7)]
 anno<- anno[nchar(anno[,3]) > 1,]# 保留第三列字符长度大于1的行
 anno<-anno[!grepl("\\|", anno[,3]), ]
@@ -87,7 +90,7 @@ spot_gene_mutcount_matrix <- merge(data.frame(CB = rownames(brain@meta.data)), s
 rownames(spot_gene_mutcount_matrix) <- spot_gene_mutcount_matrix[,1]
 spot_gene_mutcount_matrix[is.na(spot_gene_mutcount_matrix)] <- 0
 
-write.table(spot_gene_mutcount_matrix, paste(output_inter,GSE_id,SAM_id,"spot_gene_mutcount_matrix.txt",sep="/") sep = "\t", quote = F)
+write.table(spot_gene_mutcount_matrix, paste(output_inter,GSE_id,SAM_id,"spot_gene_mutcount_matrix.txt",sep="/"), sep = "\t", quote = F)
 
 ##质量控制
 ###不过滤变异的细胞数目非常少的基因
@@ -317,7 +320,7 @@ dev.off()
 
 #********************************************************
 #*获取切片图像坐标和key
-key(object = brain@images$anterior1)
+#key(object = brain@images$anterior1)
 head(GetTissueCoordinates(brain))
 head(Idents(brain))
 
@@ -382,7 +385,7 @@ long_data_5 <- long_data_4[,c(1,4)]
 colnames(long_data_5) <- c("Column_name", "Column_value")
 
 result_4 <- rbind(result_3, long_data_5)
-write.table(result_4, paste(output_table,GSE_id,SAM_id,Slice_Coor_Cluster_Mut.txt,sep="/"), row.names = F, quote = F, sep = "\t")
+write.table(result_4, paste(output_table,GSE_id,SAM_id,"Slice_Coor_Cluster_Mut.txt",sep="/"), row.names = F, quote = F, sep = "\t")
 #********************************************************
 ###########################################################################
 ##########################先跑出p10以前的代码，然后##########################
@@ -497,7 +500,7 @@ seurat_object.markers[,c(1,2,5)] <- round(seurat_object.markers[,c(1,2,5)], 4)
 seurat_object.markers$disease <- disease
 seurat_object.markers$dataset <- GSE_id 
 seurat_object.markers$sample <- SAM_id
-write.table(seurat_object.markers, paste(output_table,GSE_id,SAM_id,disease,"_",GSE_id,"_markers.txt",sep="/"), sep = "\t", row.names = F, quote = F)
+write.table(seurat_object.markers, paste(output_table,GSE_id,SAM_id,paste0(disease,"_",GSE_id,"_markers.txt"),sep="/"), sep = "\t", row.names = F, quote = F)
 #查看每个亚群的前两个
 library(tidyverse)
 seurat_object.markers %>% 
@@ -565,19 +568,19 @@ write.csv(go,file=paste(output_table,GSE_id,SAM_id,"go_0.05_ENTREZID_0.02.csv",s
 #--> No gene can be mapped....
 #--> Expected input gene ID: 
 #--> return NULL...
-hg <- bitr(x1, fromType="SYMBOL",toType=c("ENTREZID","SYMBOL"),OrgDb="org.Hs.eg.db")#ID转换
-kegg <- enrichKEGG(hg$ENTREZID, 
-                   organism = 'hsa', 
-                   keyType = 'kegg', 
-                   pvalueCutoff = 1, 
-                   pAdjustMethod = 'BH', 
-                   minGSSize = 1, 
-                   maxGSSize = 500, 
-                   qvalueCutoff = 1, 
-                   use_internal_data = FALSE)#进行KEGG富集
-dotplot(kegg, showCategory = 10)
-
-write.csv(kegg,file="E:\\lcw\\RNA_editing\\result\\kegg_P_0.5_ENTREZID_0.02.csv")
+# hg <- bitr(x1, fromType="SYMBOL",toType=c("ENTREZID","SYMBOL"),OrgDb="org.Hs.eg.db")#ID转换
+# kegg <- enrichKEGG(hg$ENTREZID, 
+#                    organism = 'hsa', 
+#                    keyType = 'kegg', 
+#                    pvalueCutoff = 1, 
+#                    pAdjustMethod = 'BH', 
+#                    minGSSize = 1, 
+#                    maxGSSize = 500, 
+#                    qvalueCutoff = 1, 
+#                    use_internal_data = FALSE)#进行KEGG富集
+# dotplot(kegg, showCategory = 10)
+# 
+# write.csv(kegg,file="E:\\lcw\\RNA_editing\\result\\kegg_P_0.5_ENTREZID_0.02.csv")
 #***********************************************************************************
 
 ##########################7-空转展示scsnv突变基因###############################
