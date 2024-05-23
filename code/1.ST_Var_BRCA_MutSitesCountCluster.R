@@ -1,11 +1,18 @@
 #更改输入输出文件夹名
+####需要更改以下两行
 disease <- "BRCA"
+GSE_id <- "GSE203612"
+#############################################################################################################################################################
+#1.Overview##################################################################################################################################################
+#############################################################################################################################################################
 input <- paste0("J:/database/STMut/data_process/",disease)
 output_inter <- paste0("J:/database/STMut/data_process/inter/",disease)
 output <- paste0("J:/database/STMut/data_process/result/",disease)
 output_table <- paste0("J:/database/STMut/data_process/result_table/",disease)
-GSE_id <- "GSE203612"
-SAM_id <- "GSM6177599"
+#遍历数据集下的样本
+dir_files<-list.dirs(path = paste(input,GSE_id,sep="/"),recursive=F,full.names=F) 
+for(SAM_id in dir_files){
+#SAM_id <- "GSM6177617"
 dir.create(paste(output_inter,GSE_id,SAM_id,sep="/"), recursive = TRUE)
 dir.create(paste(output,GSE_id,SAM_id,sep="/"), recursive = TRUE)
 dir.create(paste(output_table,GSE_id,SAM_id,sep="/"), recursive = TRUE)
@@ -28,6 +35,7 @@ for (i in colnames((brain@images$anterior1@coordinates))) {
 }
 ###############################数据的预处理################################
 ##数据标准化、识别高变基因,20秒
+brain<- subset(brain, subset = nCount_Spatial > 0)
 brain<- SCTransform(brain, assay = "Spatial", verbose = FALSE) #用SCTransform对数据进行标准化, 同时检测高变基因, 输出结果储存在 SCT assay中；#我们发现不同spot的mRNA分子数差异很大，特别是当组织中的细胞密度存在差异时，因此需要对数据进行标准化。由于细胞组织存在异质性，不同组织区域的细胞密度可能不同；因此如果采用常规单细胞转录组数据的LogNormalize标准化方法可能存在问题；这里Seurat作者推荐sctransform方法。
 ##展示高变基因
 p5<- VariableFeaturePlot(brain,cols = c( "gray60", "red"))
@@ -334,7 +342,7 @@ Slice_Coor_Cluster_integrate <- cbind(Slice_Coor_cluster, spot_corrdinates)
 library(tidyverse)
 spot_gene_mutcount_matrix <- read.table(paste(output_inter,GSE_id,SAM_id,"spot_gene_mutcount_matrix.txt",sep="/"), sep = "\t", row.names = 1)
 long_data <- spot_gene_mutcount_matrix %>% 
-             gather(key = "Gene", value = "MutCount", -CB)
+  gather(key = "Gene", value = "MutCount", -CB)
 
 # 定义一个函数，将多列值按逗号分隔开
 combine_values <- function(x) {
@@ -540,7 +548,7 @@ library(clusterProfiler)#进行GO富集和KEGG富集
 library(dplyr) #进行数据转换
 library(ggplot2)#绘图
 library(tidyverse)
-library(GOplot)
+#library(GOplot)
 
 #GO
 erich.go.BP = enrichGO(gene = x1,
@@ -561,7 +569,7 @@ dev.off()
 #                        qvalueCutoff = 0.05)
 # dotplot(erich.go.MF, showCategory = 10)
 
-write.csv(go,file=paste(output_table,GSE_id,SAM_id,"go_0.05_ENTREZID_0.02.csv",sep="/"))
+# write.csv(go,file=paste(output_table,GSE_id,SAM_id,"go_0.05_ENTREZID_0.02.csv",sep="/"))
 
 #KEGG
 #富集没有结果
@@ -588,3 +596,4 @@ write.csv(go,file=paste(output_table,GSE_id,SAM_id,"go_0.05_ENTREZID_0.02.csv",s
 # spot_gene_mutcount_matrix_1[is.na(spot_gene_mutcount_matrix_1)] <- 0
 # brain@meta.data <- cbind(brain@meta.data,spot_gene_mutcount_matrix_1[,-1])
 # SpatialFeaturePlot(brain, features = top10)#展示空转基因突变计数
+}
