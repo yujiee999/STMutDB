@@ -13,6 +13,7 @@ output_table <- paste0("J:/database/STMut/data_process/result_table/",disease)
 dir_files<-list.dirs(path = paste(input,GSE_id,sep="/"),recursive=F,full.names=F) 
 for(SAM_id in dir_files){
 #SAM_id <- "GSM6177617"
+rm(list = ls()[-match(c("disease","GSE_id","input","output_inter","output","output_table","dir_files","SAM_id"),ls())])
 dir.create(paste(output_inter,GSE_id,SAM_id,sep="/"), recursive = TRUE)
 dir.create(paste(output,GSE_id,SAM_id,sep="/"), recursive = TRUE)
 dir.create(paste(output_table,GSE_id,SAM_id,sep="/"), recursive = TRUE)
