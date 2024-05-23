@@ -35,7 +35,7 @@ for (i in colnames((brain@images$anterior1@coordinates))) {
 }
 ###############################数据的预处理################################
 ##数据标准化、识别高变基因,20秒
-brain<- subset(brain, subset = nCount_Spatial > 0)
+#brain<- subset(brain, subset = nCount_Spatial > 0)
 brain<- SCTransform(brain, assay = "Spatial", verbose = FALSE) #用SCTransform对数据进行标准化, 同时检测高变基因, 输出结果储存在 SCT assay中；#我们发现不同spot的mRNA分子数差异很大，特别是当组织中的细胞密度存在差异时，因此需要对数据进行标准化。由于细胞组织存在异质性，不同组织区域的细胞密度可能不同；因此如果采用常规单细胞转录组数据的LogNormalize标准化方法可能存在问题；这里Seurat作者推荐sctransform方法。
 ##展示高变基因
 p5<- VariableFeaturePlot(brain,cols = c( "gray60", "red"))
