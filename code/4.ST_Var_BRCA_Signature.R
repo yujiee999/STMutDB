@@ -1,5 +1,7 @@
 ######################################构建spot突变簇类别somatic突变
 ##参考https://mp.weixin.qq.com/s?__biz=MzAxMDkxODM1Ng==&mid=2247494325&idx=1&sn=94891e349ceb9b459e91e86db144b4ea&chksm=9b4baa0eac3c2318bfb4cfa66875078db89baf0eaf4543ed785ed4892532cbdd0145fb2ba1fd#rd
+rm(list = ls())
+library(Seurat)
 input_path <- "E:/数据库/STMut/数据处理/结果"
 
 # 在给定目录中找到所有GSE开头的文件夹
@@ -15,6 +17,7 @@ for (gse_dir in gse_dirs) {
   
   for(gsm_dir in gsm_dirs) {
     
+      input_path <- "E:/数据库/STMut/数据处理/结果"
       sample_name <- tail(unlist(strsplit(gsm_dir, "/")), n=1)
     
       file_path <- paste0(input_path, "/", dataset_name, "/", sample_name, "/Step4_VariantCalling")
@@ -44,6 +47,7 @@ for (gse_dir in gse_dirs) {
       data_dir <- readRDS(paste0("E:/数据库/STMut/数据处理/结果/inter/", dataset_name, "/", sample_name, "/ST_Mut_SeuratObject.rds"))
       spot_cluster <- data_dir@meta.data
       spot_cluster$mut_cluster <- paste0("C_",spot_cluster$mut_cluster)
+      spot_cluster$CB <- rownames(spot_cluster)
       Maf_data <- merge(gene_mut_spot,spot_cluster)
       ######################################提取突变上下文已经计算96突变形式的比例
       library(SomaticSignatures)
@@ -81,18 +85,19 @@ for (gse_dir in gse_dirs) {
         print(p1)
         dev.off()
       }
-      plotMutSigProfile(trimatrix_sample)[[1]]
-      plotMutSigProfile(trimatrix_sample)[[2]]
-      plotMutSigProfile(trimatrix_sample)[[3]]
-      plotMutSigProfile(trimatrix_sample)[[4]]
-      plotMutSigProfile(trimatrix_sample)[[5]]
-      plotMutSigProfile(trimatrix_sample)[[6]]
+      # plotMutSigProfile(trimatrix_sample)[[1]]
+      # plotMutSigProfile(trimatrix_sample)[[2]]
+      # plotMutSigProfile(trimatrix_sample)[[3]]
+      # plotMutSigProfile(trimatrix_sample)[[4]]
+      # plotMutSigProfile(trimatrix_sample)[[5]]
+      # plotMutSigProfile(trimatrix_sample)[[6]]
       
       ######################################空间分布簇突变集与COSMIC特征相关性######################################
       ##每簇突变集与COSMIC特征相关性
       fit_sample <- fitSignatures(trimatrix_sample,signaturesRef="exome_cosmic_v3")
-      png("E:/数据库/STMut/数据处理/结果/inter/",dataset_name,"/",sample_name,"/","Cosine_similarity.png", width = 1225, height = 650)
-      ComplexHeatmap::Heatmap(fit_sample$P$cosine.similarity, name = "Cosine similarity",col = viridis(100))
+      png(paste0("E:/数据库/STMut/数据处理/结果/inter/",dataset_name,"/",sample_name,"/","Cosine_similarity.png"), width = 1225, height = 650)
+      p2 <- ComplexHeatmap::Heatmap(fit_sample$P$cosine.similarity, name = "Cosine similarity",col = viridis(100))
+      print(p2)
       dev.off()
       
       fit_sample_cos_similarity <- as.data.frame(fit_sample$P$cosine.similarity)
@@ -118,14 +123,15 @@ for (gse_dir in gse_dirs) {
       my_colors <- c("grey","#FF6F61", "#6B5B95", "#88B04B", "#F7CAC9", "#92A8D1", "#955251", "#B565A7", "#009B77","#FFB6C1", "#7FFFD4", "#FFD700", "#40E0D0")
       # 创建分组百分比堆叠图
       library(ggplot2)
-      png(paste0("E:/数据库/STMut/数据处理/结果/inter/",dataset_name,"/",sample_name,"/",mut_sigature_contribution.png), width = 1225, height = 650)
-      ggplot(data_long, aes(x = Category, y = Value, fill = Signature)) +
+      png(paste0("E:/数据库/STMut/数据处理/结果/inter/",dataset_name,"/",sample_name,"/mut_sigature_contribution.png"), width = 1225, height = 650)
+      p3 <- ggplot(data_long, aes(x = Category, y = Value, fill = Signature)) +
         geom_bar(stat = "identity",color = "black") +
         scale_fill_manual(values = my_colors) +
         labs(title = "Mutational signature contribution",  y = "Mutational signature
        contribution") +
         theme_classic()+
         coord_flip()  # 翻转坐标轴
+      print(p3)
       dev.off()
       
       #*************************************数据库需要的数据格式（最后把所有样本的合到一起）*****************************************************
@@ -226,6 +232,15 @@ for (gse_dir in gse_dirs) {
       
       write.table(MutProb_1, paste0("E:/数据库/STMut/数据处理/结果/result_table/", dataset_name, "/", sample_name, "/MutationSignatures.txt"), sep = "\t", quote = F, row.names = F)
       
-    
-  }
+      #清除变量
+      # 列出所有的对象
+      objs <- ls()
+      
+      # 保留aa变量，移除其他所有变量
+      objs <- objs[which(objs != c("gse_dirs", "gse_dir", "gsm_dirs", "gsm_dir", "dataset_name", "input_path"))]
+      
+      # 使用rm函数移除这些变量以释放内存
+      rm(list=objs)
+      gc()
+    }
 }
