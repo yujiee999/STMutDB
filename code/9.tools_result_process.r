@@ -117,9 +117,9 @@ for (i in 1:40) {
       #拼接位点
       # 对数据框的每一行进行操作，拼接字符串，并保存到新列 result
       df2$variants <- apply(df2, 1, function(row) {
-        aa <- paste(row[1], ":", row[2], sep = "")
-        bb <- paste(row[4], ">", row[5], sep = "")
-        paste(aa, bb, sep = ",")
+        aa <- paste(row[1], "_", row[2], sep = "")
+        bb <- paste(row[4], "_", row[5], sep = "")
+        paste(aa, bb, sep = "_")
       })
       df2$variants <- gsub(" ", "", df2$variants)
       df3 <- df2[,c("CB", "variants")]
