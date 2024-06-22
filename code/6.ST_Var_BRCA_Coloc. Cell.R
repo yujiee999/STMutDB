@@ -133,6 +133,8 @@ for (gse_dir in gse_dirs) {
     
     coloc <- Cell_Colocalization_Mut_p_cluster[,-c(5,6)]
     coloc$Fisher_p <- round(coloc[,4], 4)
+    coloc$sample <- sample_name
+    coloc$dataset <- dataset_name
     write.table(coloc, paste0("E:/数据库/STMut/数据处理/结果/result_table/", dataset_name, "/", sample_name, "/coloc.txt"), sep = "\t", quote = F, row.names = F)
     
     #co_local <- "E:/数据库/STMut/数据处理/结果/BRCA/GSE203612/GSM6177599/"
