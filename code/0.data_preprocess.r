@@ -13,6 +13,13 @@ data1 <- data %>%
 data1[is.na(data1)] <- "-"
 write.table(data1, "E:/数据库/STMut/数据处理/结果表格/dataset_basic.txt", sep = "\t", quote = F, row.names = F)
 
+dataset_basic <- read.table("E:/数据库/STMut/数据处理/结果表格/dataset_basic_1.txt", sep = "\t", check.names = F, header = T)
+dataset_basic[which(dataset_basic$Dataset == "GSE158328"), "PMID"] <- "33406409"
+write.table(dataset_basic, "E:/数据库/STMut/数据处理/结果表格/dataset_basic_2.txt", sep = "\t", quote = F, row.names = F)
+
+sample_basic <- read.table("E:/数据库/STMut/数据处理/结果表格/sample_basic_1.txt", sep = "\t", check.names = F, header = T)
+sample_basic[which(sample_basic$Dataset == "GSE158328"), "PMID"] <- "33406409"
+write.table(sample_basic, "E:/数据库/STMut/数据处理/结果表格/sample_basic_2.txt", sep = "\t", quote = F, row.names = F)
 
 data_disease <- data %>%
 		group_by(Disease) %>%
